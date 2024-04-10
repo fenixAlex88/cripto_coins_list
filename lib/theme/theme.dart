@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
 final darkTheme = ThemeData(
+  floatingActionButtonTheme: const FloatingActionButtonThemeData(
+    backgroundColor: Colors.yellow,
+  ),
   appBarTheme: const AppBarTheme(
+      elevation: 0,
       backgroundColor: Color.fromARGB(255, 32, 32, 32),
       iconTheme: IconThemeData(
         color: Colors.white,
