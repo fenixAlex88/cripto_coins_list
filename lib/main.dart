@@ -13,47 +13,52 @@ import 'package:talker_bloc_logger/talker_bloc_logger.dart';
 import 'package:talker_dio_logger/talker_dio_logger.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+void main() {
+  runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
 
-  const cryptoCoinsBoxName = 'crypto_coins_box';
+    const cryptoCoinsBoxName = 'crypto_coins_box';
 
-  final talker = TalkerFlutter.init();
-  GetIt.I.registerSingleton(talker);
-  GetIt.I<Talker>().debug("Talker started...");
+    final talker = TalkerFlutter.init();
+    GetIt.I.registerSingleton(talker);
+    GetIt.I<Talker>().debug("Talker started...");
 
-  await Hive.initFlutter();
+    await Hive.initFlutter();
+    Hive.registerAdapter(CryptoCoinAdapter());
+    Hive.registerAdapter(CryptoCoinDetailAdapter());
 
-  Hive.registerAdapter(CryptoCoinAdapter());
-  Hive.registerAdapter(CryptoCoinDetailAdapter());
+    final cryptoCoinsBox = await Hive.openBox<CryptoCoin>(cryptoCoinsBoxName);
 
-  final cryptiCoinsBox = await Hive.openBox<CryptoCoin>(cryptoCoinsBoxName);
-
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-
-  final dio = Dio();
-  dio.interceptors.add(
-    TalkerDioLogger(
-      talker: talker,
-      settings: const TalkerDioLoggerSettings(
-        printResponseData: false,
+    final dio = Dio();
+    dio.interceptors.add(
+      TalkerDioLogger(
+        talker: talker,
+        settings: const TalkerDioLoggerSettings(
+          printResponseData: false,
+        ),
       ),
-    ),
-  );
+    );
 
-  Bloc.observer = TalkerBlocObserver(
+    Bloc.observer = TalkerBlocObserver(
       talker: talker,
       settings: const TalkerBlocLoggerSettings(
-          printEventFullData: false, printStateFullData: false));
-  GetIt.I.registerLazySingleton<AbstractCoinsRepository>(
-    () => CryptoCoinsRepository(dio: dio, cryptoCoinsBox: cryptiCoinsBox),
-  );
+        printEventFullData: false,
+        printStateFullData: false,
+      ),
+    );
 
-  FlutterError.onError =
-      ((details) => GetIt.I<Talker>().handle(details.exception, details.stack));
+    GetIt.I.registerLazySingleton<AbstractCoinsRepository>(
+      () => CryptoCoinsRepository(dio: dio, cryptoCoinsBox: cryptoCoinsBox),
+    );
 
-  runZonedGuarded(() => runApp(const CryptoCurrenciesListApp()),
-      (error, stack) => GetIt.I<Talker>().handle(error, stack));
+    FlutterError.onError = ((details) =>
+        GetIt.I<Talker>().handle(details.exception, details.stack));
+
+    runApp(const CryptoCurrenciesListApp());
+  }, (error, stackTrace) {
+    GetIt.I<Talker>().handle(error, stackTrace);
+  });
 }
