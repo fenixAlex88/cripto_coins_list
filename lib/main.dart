@@ -16,7 +16,6 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final talker = TalkerFlutter.init();
-  GetIt.I<Talker>().debug("Talker started...");
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -41,6 +40,7 @@ Future<void> main() async {
     () => CryptoCoinsRepository(dio: dio),
   );
 
+  GetIt.I<Talker>().debug("Talker started...");
   FlutterError.onError =
       ((details) => GetIt.I<Talker>().handle(details.exception, details.stack));
 
