@@ -21,6 +21,7 @@ dependencies:
   talker_bloc_logger: ^4.1.3
   firebase_core: ^2.29.0
   json_annotation: ^4.8.1
+  hive_flutter: ^1.1.0
 
 dev_dependencies:
   flutter_test:
@@ -28,6 +29,7 @@ dev_dependencies:
   flutter_lints: ^2.0.0
   json_serializable: ^6.7.1
   build_runner: ^2.4.9
+  hive_generator: ^2.0.0
 
 flutter:
   uses-material-design: true
