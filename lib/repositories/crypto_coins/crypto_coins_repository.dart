@@ -26,7 +26,8 @@ class CryptoCoinsRepository implements AbstractCoinsRepository {
       GetIt.I<Talker>().handle(e, st);
       cryptoCoinsList = cryptoCoinsBox.values.toList();
     }
-
+    cryptoCoinsList
+        .sort((a, b) => b.datails.priceInUSD.compareTo(a.datails.priceInUSD));
     return cryptoCoinsList;
   }
 
@@ -48,7 +49,7 @@ class CryptoCoinsRepository implements AbstractCoinsRepository {
           // imageUrl: 'https://www.cryptocompare.com/$imageUrl',
           );
     }).toList();
-    cryptoCoinsList.sort((a,b)=>b.datails.priceInUSD.compareTo(a.datails.priceInUSD));
+
     return cryptoCoinsList;
   }
 
